@@ -207,7 +207,6 @@
                 $trait_ref_array = array();
 
                 $trait_name_symbol->$traitset_trait_node->Symbol->ElementValue;
-                $file_content.="Symbole du trait : ".$trait_name_symbol;
                 $from = array("&gt;","&lt;",">","<","'");
                 $to = array("","","","","");
                 $trait_name_escaped = utf8_decode(preg_replace("/\s/","_",str_replace($from,$to,$trait_name)));
@@ -247,6 +246,37 @@
       );
 
   };
+
+  $notr_cva_node = $xml_root->ClinVarAssertion; //Clinvar Assertion node, not the reference assertion
+    $notr_cva_measureset_node = $notr_cva_node->MeasureSet;
+    $notr_cva_measure = $notr_cva_measureset_node->Measure;
+    if($notr_cva_measure->AttributeSet != null) {
+      foreach($notr_cva_measure->AttributeSet as $attributeSet) {
+        if($attributeSet->XRef != null) {
+          foreach($attributeSet->XRef as $xrefname) {
+            if($xrefname != null) {
+              $xref_id = $xml->GetAttributeValue($xrefname,"ID");
+              $xref_db = $xml->GetAttributeValue($xrefname,"DB");
+              $from = array("&gt;","&lt;",">","<","'");
+              $to = array("","","","","");
+              $xref_db_escaped = utf8_decode(preg_replace("/\s/","_",str_replace($from,$to,$xref_db)));
+              $xref_db_low = strtolower($xref_db_escaped);
+              $xref_id_escaped = utf8_decode(preg_replace("/\s/","_",str_replace($from,$to,$xref_id)));
+              $xref_id_low = strtolower($xref_id_escaped);
+              echo $xref_id_low." ".$xref_db_low;
+              parent::AddRDF(
+                parent::describeIndividual($xref_db_low.":".$xref_id_low, $xref_id_low, parent::getVoc()."x-".$xref_db_low).
+                parent::triplify("clinvar:".$symbol_elementvalue, parent::getVoc()."x-".$xref_db_low, $xref_db_low.":".$xref_id_low)
+                );
+            }
+
+          };
+        }
+
+      }
+
+    }
+
 
   $this->WriteRDFBufferToWriteFile();
   continue;
