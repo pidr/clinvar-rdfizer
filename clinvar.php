@@ -179,6 +179,34 @@
 
                   }
 
+                  if($measure->AttributeSet != null) {
+                    foreach($measure->AttributeSet as $attributeSet) {
+                      if($attributeSet->XRef != null) {
+                        foreach($attributeSet->XRef as $xrefname) {
+                          if($xrefname != null) {
+                            $xref_id = $xml->GetAttributeValue($xrefname,"ID");
+                            $xref_db = $xml->GetAttributeValue($xrefname,"DB");
+                            $from = array("&gt;","&lt;",">","<","'");
+                            $to = array("","","","","");
+                            $xref_db_escaped = utf8_decode(preg_replace("/\s/","_",str_replace($from,$to,$xref_db)));
+                            $xref_db_low = strtolower($xref_db_escaped);
+                            $xref_id_escaped = utf8_decode(preg_replace("/\s/","_",str_replace($from,$to,$xref_id)));
+                            $xref_id_low = strtolower($xref_id_escaped);
+                            var_dump($xref_id_low);
+                            parent::AddRDF(
+                              parent::describeIndividual($xref_db_low.":".$xref_id_low, $xref_id_low, parent::getVoc()."x-".$xref_db_low).
+                              parent::triplify("clinvar:".$symbol_elementvalue, parent::getVoc()."x-".$xref_db_low, $xref_db_low.":".$xref_id_low)
+                              );
+                          }
+
+                        };
+                      }
+
+                    }
+
+                  }
+
+
 
                   foreach($measure_relationship->XRef as $xrefel) {
                     $xref_id = $xml->GetAttributeValue($xrefel,"ID");
@@ -263,6 +291,7 @@
               $xref_db_low = strtolower($xref_db_escaped);
               $xref_id_escaped = utf8_decode(preg_replace("/\s/","_",str_replace($from,$to,$xref_id)));
               $xref_id_low = strtolower($xref_id_escaped);
+              var_dump($xref_id_low);
               parent::AddRDF(
                 parent::describeIndividual($xref_db_low.":".$xref_id_low, $xref_id_low, parent::getVoc()."x-".$xref_db_low).
                 parent::triplify("clinvar:".$symbol_elementvalue, parent::getVoc()."x-".$xref_db_low, $xref_db_low.":".$xref_id_low)
@@ -277,7 +306,7 @@
     }
 
 
-  $this->WriteRDFBufferToWriteFile();
+  // $this->WriteRDFBufferToWriteFile();
   continue;
 
   }
