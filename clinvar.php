@@ -321,7 +321,7 @@
     }
 
 
-  // $this->WriteRDFBufferToWriteFile();
+  $this->WriteRDFBufferToWriteFile();
   continue;
 
   }
