@@ -192,7 +192,6 @@
                             $xref_db_low = strtolower($xref_db_escaped);
                             $xref_id_escaped = utf8_decode(preg_replace("/\s/","_",str_replace($from,$to,$xref_id)));
                             $xref_id_low = strtolower($xref_id_escaped);
-                            var_dump($xref_id_low);
                             parent::AddRDF(
                               parent::describeIndividual($xref_db_low.":".$xref_id_low, $xref_id_low, parent::getVoc()."x-".$xref_db_low).
                               parent::triplify("clinvar:".$symbol_elementvalue, parent::getVoc()."x-".$xref_db_low, $xref_db_low.":".$xref_id_low)
@@ -275,6 +274,23 @@
 
   };
 
+  foreach($traitset_trait_node->XRef as $xrefname) {
+    $xref_id = $xml->GetAttributeValue($xrefname,"ID");
+    $xref_db = $xml->GetAttributeValue($xrefname,"DB");
+    $from = array("&gt;","&lt;",">","<","'");
+    $to = array("","","","","");
+    $xref_db_escaped = utf8_decode(preg_replace("/\s/","_",str_replace($from,$to,$xref_db)));
+    $xref_db_low = strtolower($xref_db_escaped);
+    $xref_id_escaped = utf8_decode(preg_replace("/\s/","_",str_replace($from,$to,$xref_id)));
+    $xref_id_low = strtolower($xref_id_escaped);
+    parent::AddRDF(
+      parent::describeIndividual($xref_db_low.":".$xref_id_low, $xref_id_low, parent::getVoc()."x-".$xref_db_low).
+      parent::triplify("clinvar:".$trait_name_low, parent::getVoc()."x-".$xref_db_low, $xref_db_low.":".$xref_id_low)
+      );
+
+  };
+
+
   $notr_cva_node = $xml_root->ClinVarAssertion; //Clinvar Assertion node, not the reference assertion
     $notr_cva_measureset_node = $notr_cva_node->MeasureSet;
     $notr_cva_measure = $notr_cva_measureset_node->Measure;
@@ -291,7 +307,6 @@
               $xref_db_low = strtolower($xref_db_escaped);
               $xref_id_escaped = utf8_decode(preg_replace("/\s/","_",str_replace($from,$to,$xref_id)));
               $xref_id_low = strtolower($xref_id_escaped);
-              var_dump($xref_id_low);
               parent::AddRDF(
                 parent::describeIndividual($xref_db_low.":".$xref_id_low, $xref_id_low, parent::getVoc()."x-".$xref_db_low).
                 parent::triplify("clinvar:".$symbol_elementvalue, parent::getVoc()."x-".$xref_db_low, $xref_db_low.":".$xref_id_low)
